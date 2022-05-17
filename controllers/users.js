@@ -55,7 +55,7 @@ module.exports.patchProfile = (req, res) => {
     name.length < 2 ||
     about.length < 2 ||
     name.length > 30 ||
-    about.length < 30
+    about.length > 30
   ) {
     res.status(400).send({
       message: "Переданы некорректные данные при обновлении пользователя",
