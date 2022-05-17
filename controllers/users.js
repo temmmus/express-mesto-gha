@@ -39,7 +39,7 @@ module.exports.getUser = (req, res) => {
       if (err.name === "CastError") {
         res
           .status(404)
-          .send({ message: "Пользователь с указанным _id не найден" });
+          .send({ message: "Пользователь по указанному _id не найден" });
         return;
       } else {
         res.status(500).send({ message: "Произошла ошибка" });
@@ -50,6 +50,18 @@ module.exports.getUser = (req, res) => {
 
 module.exports.patchProfile = (req, res) => {
   const { name, about } = req.body;
+
+  if (
+    name.length < 2 ||
+    about.length < 2 ||
+    name.length > 30 ||
+    about.length < 30
+  ) {
+    res.status(400).send({
+      message: "Переданы некорректные данные при обновлении пользователя",
+    });
+    return;
+  }
 
   User.findByIdAndUpdate(req.user._id, { $set: { name, about } }, { new: true })
     .then((users) => res.send({ data: users }))
