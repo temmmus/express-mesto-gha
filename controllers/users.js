@@ -8,6 +8,30 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
+module.exports.createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .then((users) => res.send({ data: users }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(400).send({
+          message: "Переданы некорректные данные при создании пользователя",
+        });
+        return;
+      }
+      if (err.name === "CastError") {
+        res
+          .status(404)
+          .send({ message: "Пользователь с указанным _id не найден" });
+        return;
+      } else {
+        res.status(500).send({ message: "Произошла ошибка" });
+        return;
+      }
+    });
+};
+
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((users) => res.send({ data: users }))
@@ -56,30 +80,6 @@ module.exports.pacthAratar = (req, res) => {
     { $set: { avatar: newAvatar } },
     { new: true }
   )
-    .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({
-          message: "Переданы некорректные данные при обновлении профиля",
-        });
-        return;
-      }
-      if (err.name === "CastError") {
-        res
-          .status(404)
-          .send({ message: "Пользователь с указанным _id не найден" });
-        return;
-      } else {
-        res.status(500).send({ message: "Произошла ошибка" });
-        return;
-      }
-    });
-};
-
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === "ValidationError") {
