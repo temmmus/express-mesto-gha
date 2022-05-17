@@ -34,7 +34,16 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((users) => res.send({ data: users }))
+    .then((users) => {
+      if (users === null) {
+        res
+          .status(404)
+          .send({ message: "Пользователь по указанному _id не найден" });
+        return;
+      } else {
+        res.send({ data: users });
+      }
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         res

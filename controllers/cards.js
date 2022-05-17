@@ -33,7 +33,16 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => {
+      if (cards === null) {
+        res
+          .status(404)
+          .send({ message: "Передан несуществующий _id карточки" });
+        return;
+      } else {
+        res.send({ data: cards });
+      }
+    })
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(400).send({
@@ -59,7 +68,16 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => {
+      if (cards === null) {
+        res
+          .status(404)
+          .send({ message: "Передан несуществующий _id карточки" });
+        return;
+      } else {
+        res.send({ data: cards });
+      }
+    })
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(400).send({
@@ -81,7 +99,16 @@ module.exports.dislikeCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findOneAndRemove({ _id: req.params.cardId })
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => {
+      if (cards === null) {
+        res
+          .status(404)
+          .send({ message: "Передан несуществующий _id карточки" });
+        return;
+      } else {
+        res.send({ data: cards });
+      }
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         res
