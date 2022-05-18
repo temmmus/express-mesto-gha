@@ -10,9 +10,8 @@ module.exports.createCard = (req, res) => {
   const owner = req.user._id;
   const likes = [];
   const { name, link } = req.body;
-  const createdAt = new Date();
 
-  Card.create({ name, link, owner, likes, createdAt })
+  Card.create({ name, link, owner, likes })
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -44,16 +43,10 @@ module.exports.likeCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({
-          message: "Переданы некорректные данные для постановки/снятии лайка",
-        });
-        return;
-      }
       if (err.name === "CastError") {
-        res
-          .status(404)
-          .send({ message: "Передан несуществующий _id карточки" });
+        res.status(400).send({
+          message: "Переданы некорректные данные при создании карточки",
+        });
         return;
       } else {
         res.status(500).send({ message: "Произошла ошибка" });
@@ -79,16 +72,12 @@ module.exports.dislikeCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({
-          message: "Переданы некорректные данные для постановки/снятии лайка",
-        });
-        return;
-      }
       if (err.name === "CastError") {
         res
-          .status(404)
-          .send({ message: "Передан несуществующий _id карточки" });
+          .status(400)
+          .send({
+            message: "Переданы некорректные данные при создании карточки",
+          });
         return;
       } else {
         res.status(500).send({ message: "Произошла ошибка" });
