@@ -73,11 +73,9 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res
-          .status(400)
-          .send({
-            message: "Переданы некорректные данные при создании карточки",
-          });
+        res.status(400).send({
+          message: "Переданы некорректные данные при создании карточки",
+        });
         return;
       } else {
         res.status(500).send({ message: "Произошла ошибка" });
@@ -101,8 +99,10 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.name === "CastError") {
         res
-          .status(404)
-          .send({ message: "Карточка с указанным _id не найдена" });
+          .status(400)
+          .send({
+            message: "Переданы некорректные данные при создании карточки",
+          });
         return;
       } else {
         res.status(500).send({ message: "Произошла ошибка" });
