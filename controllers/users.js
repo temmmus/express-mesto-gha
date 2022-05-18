@@ -1,10 +1,10 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      res.status(500).send({ message: "Произошла ошибка" });
+      res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -14,14 +14,12 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(400).send({
-          message: "Переданы некорректные данные при создании пользователя",
+          message: 'Переданы некорректные данные при создании пользователя',
         });
-        return;
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
-        return;
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -32,21 +30,18 @@ module.exports.getUser = (req, res) => {
       if (users === null) {
         res
           .status(404)
-          .send({ message: "Пользователь по указанному _id не найден" });
-        return;
+          .send({ message: 'Пользователь по указанному _id не найден' });
       } else {
         res.send({ data: users });
       }
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         res
           .status(400)
-          .send({ message: "Пользователь по указанному _id не найден" });
-        return;
+          .send({ message: 'Пользователь по указанному _id не найден' });
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
-        return;
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -57,18 +52,16 @@ module.exports.patchProfile = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { $set: { name, about } },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(400).send({
-          message: "Переданы некорректные данные при обновлении профиля",
+          message: 'Переданы некорректные данные при обновлении профиля',
         });
-        return;
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
-        return;
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -79,18 +72,16 @@ module.exports.pacthAratar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { $set: { avatar: newAvatar } },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(400).send({
-          message: "Переданы некорректные данные при обновлении профиля",
+          message: 'Переданы некорректные данные при обновлении профиля',
         });
-        return;
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
-        return;
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
