@@ -24,7 +24,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((users) => res.send({ data: users }))
+    .then((user) => { res.send(user); })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
@@ -109,19 +109,22 @@ module.exports.pacthAratar = (req, res, next) => {
 };
 
 module.exports.login = (req, res, next) => {
+  if (req.body.email == null || req.body.password == null) {
+    next(new BadRequestError('Переданы некорректные данные при авторизации'));
+  }
+
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-
       res.cookie(token, {
         maxAge: 3600000,
         httpOnly: true,
       })
         .end();
     })
-    .catch(
-      next(new UnauthorizedError('Указан неверный логин или пароль')),
-    );
+    .catch(() => {
+      next(new UnauthorizedError('Указан неверный логин или пароль'));
+    });
 };
