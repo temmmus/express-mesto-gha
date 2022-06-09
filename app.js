@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const process = require('process');
+const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
@@ -36,6 +37,8 @@ process.on('uncaughtException', (err, origin) => {
     `${origin} ${err.name} c текстом ${err.message} не была обработана. Обратите внимание!`,
   );
 });
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   res.status(err.statusCode).send({ message: err.message });
