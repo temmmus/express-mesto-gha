@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 
 const { Schema } = mongoose;
 
@@ -23,9 +24,7 @@ const userSchema = new Schema({
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator() {
-        return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
-      },
+      validator: (value) => validator.isURL(value, { protocols: ['http', 'https', 'ftp'], require_tld: true, require_protocol: true }),
       message: 'Передан невалидный url',
     },
   },
@@ -33,6 +32,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    validate: {
+      validator: (value) => validator.isEmail(value),
+      message: 'Передан невалидный email',
+    },
   },
   password: {
     type: String,

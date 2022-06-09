@@ -1,22 +1,14 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized-err');
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
-
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new UnauthorizedError('Указан неверный логин или пароль'));
-  }
-
-  const token = extractBearerToken(authorization);
+  const token = req.cookies.jwt;
   let payload;
 
   try {
     payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
-    next(new UnauthorizedError('Указан неверный логин или пароль'));
+    next(new UnauthorizedError('Доступ запрещен'));
   }
 
   req.user = payload;
