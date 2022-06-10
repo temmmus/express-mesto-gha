@@ -56,11 +56,6 @@ process.on('uncaughtException', (err, origin) => {
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-  next(err);
-});
-
-app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
   res
