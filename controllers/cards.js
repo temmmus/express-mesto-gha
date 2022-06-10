@@ -94,11 +94,12 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById({ _id: req.params.cardId })
     .then((card) => {
       if (card === null) {
-        next(new NotFoundError('Карточка по указанному id не найден'));
-      } else if (!card.owner.equals(req.user._id)) {
-        next(new ForbiddenError('Невозможно удалить чужую карточку'));
+        return next(new NotFoundError('Карточка по указанному id не найден'));
       }
-      card.remove()
+      if (!card.owner.equals(req.user._id)) {
+        return next(new ForbiddenError('Невозможно удалить чужую карточку'));
+      }
+      return card.remove()
         .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch((err) => {
